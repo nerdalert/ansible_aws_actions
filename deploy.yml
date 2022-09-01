@@ -13,5 +13,6 @@
 - hosts: localhost
   vars_files:
     - vars.yml
+    - credentials.yml
   roles:
     - role: terminate-ec2

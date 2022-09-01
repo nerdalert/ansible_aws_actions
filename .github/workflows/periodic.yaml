@@ -48,7 +48,7 @@ jobs:
 
     - name: Deploy EC2 Playbooks
       run: |
-        ansible-playbook -vv deploy.yml --e vars.yml --vault-password-file vault-secret.txt
+        ansible-playbook -vv deploy.yml --vault-password-file vault-secret.txt
         rm vault-secret.txt
         rm patu-ci
 
