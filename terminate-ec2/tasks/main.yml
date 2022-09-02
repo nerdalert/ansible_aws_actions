@@ -5,5 +5,5 @@
   ec2_instance:
     state: absent
     filters:
-      "tag:NodeType": "patu-ci-single-node-cluster"
+      "tag:NodeType": "{{ aws_nodetype_tag }}"
       instance-state-name: running

@@ -33,8 +33,6 @@
          subnet_id: "{{ aws_subnet }}"
          tags:
            NodeType: "patu-ci-single-node-cluster"
-         aws_access_key: "{{ access_key }}"
-         aws_secret_key: "{{ secret_key }}"
          state: running
          wait: true
       register: nodeIP

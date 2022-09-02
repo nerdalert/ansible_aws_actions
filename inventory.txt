@@ -1,1 +1,2 @@
 [singleNodeCluster]
+3.84.40.69 ansible_user=ubuntu ansible_connection=ssh node-name=single-node-cluster-1

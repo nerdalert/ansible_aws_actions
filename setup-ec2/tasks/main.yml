@@ -10,8 +10,6 @@
     aws_region: "{{ aws_region }}"
     description: "{{ security_group_description }}"
     vpc_id: "{{ vpc_id }}"
-    aws_access_key: "{{ access_key }}"
-    aws_secret_key: "{{ secret_key }}"
     rules:
       - proto: all
         cidr_ip: "0.0.0.0/0"
@@ -29,8 +27,6 @@
     subnet_id: "{{ aws_subnet }}"
     tags:
       NodeType: "patu-ci-single-node-cluster"
-    aws_access_key: "{{ access_key }}"
-    aws_secret_key: "{{ secret_key }}"
     state: running
     wait: true
   register: nodeIP
