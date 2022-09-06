@@ -1,5 +1,6 @@
 ---
 # tasks file for install-kubeadm
+
 - name: Update repo cache
   become: yes
   apt:
@@ -65,8 +66,13 @@
     K8S_VERSION: "1.24.4-00"
   shell: sudo apt install -y kubeadm={{ K8S_VERSION }} kubelet={{ K8S_VERSION }} kubectl={{ K8S_VERSION }}
 
-- name: Deploy kubeadm single node cluster
+- name: Deploy kubeadm for the Patu matrix with kubeproxy disabled
   shell: sudo kubeadm init --upload-certs --pod-network-cidr=10.200.0.0/16 --v=6 --skip-phases=addon/kube-proxy
+  when:  MATRIX_CNI == "patu"
+
+- name: Deploy kubeadm for the Flannel CNI matrix with kubeproxy enabled
+  shell: sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+  when:  MATRIX_CNI == "flannel"
 
 - name: Wait for kubeconfig to be created
   become: yes
@@ -93,6 +99,10 @@
 
 - name: export KUBECONFIG
   shell: export KUBECONFIG=/home/{{ ansible_user }}/.kube/config
+
+- name: Pause for convergence
+  pause:
+    seconds: 15
 
 - name: Verify kubectl
   command: kubectl get pods --all-namespaces

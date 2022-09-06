@@ -4,6 +4,11 @@
   pip:
     name: boto
     state: present
+
+- name: Generate a UUID for the ec2 host
+  shell: uuidgen | head -c 6
+  register: uuid
+
 - name: Creating Security Group for Patu CI
   amazon.aws.ec2_group:
     name: "{{ secgroup_name }}"
@@ -16,7 +21,7 @@
 
 - name: Launching Single Node Cluster Machines
   amazon.aws.ec2_instance:
-    name: "single-node-cluster-{{ item+1 }}"
+    name: "single-node-cluster-{{ item+1 }}-{{ uuid.stdout }}"
     aws_region: "{{ aws_region }}"
     key_name: "{{ aws_key_name }}"
     instance_type: "{{ aws_instance_type }}"
@@ -36,7 +41,7 @@
   lineinfile:
     path: "{{ inventory_location }}"
     regexp: "singleNodeCluster"
-    line: "[singleNodeCluster]\n{{ nodeIP['results'][item]['instances'][0]['public_ip_address']}} ansible_user={{ ansible_user }} ansible_connection=ssh node-name=single-node-cluster-{{ item+1 }}"
+    line: "[singleNodeCluster]\n{{ nodeIP['results'][item]['instances'][0]['public_ip_address']}} ansible_user={{ ansible_user }} ansible_connection=ssh node-name=single-node-cluster-{{ item+1 }}-{{ uuid.stdout }}"
   loop: "{{ range(0, node_count | int) }}"
 
 - name: Refresh inventory to ensure new instaces exist in inventory

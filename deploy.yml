@@ -2,17 +2,61 @@
 - hosts: localhost
   vars_files:
     - vars.yml
-#    - credentials.yml
   roles:
     - role: setup-ec2
 
-#- hosts: singleNodeCluster
-#  roles:
-#    - role: install-kubeadm
-
-- hosts: localhost
-  vars_files:
-    - vars.yml
-#    - credentials.yml
+- hosts: singleNodeCluster
   roles:
-    - role: terminate-ec2
+    - role: install-kubeadm
+      environment:
+        KUBECONFIG: /home/{{ ansible_user }}/.kube/config
+      when: MATRIX_CNI == "patu"
+
+- hosts: singleNodeCluster
+  roles:
+    - role: install-kubeadm
+      environment:
+        KUBECONFIG: /home/{{ ansible_user }}/.kube/config
+      when: MATRIX_CNI == "flannel"
+
+- hosts: singleNodeCluster
+  roles:
+    - role: install-cni
+      environment:
+        KUBECONFIG: /home/{{ ansible_user }}/.kube/config
+      when: MATRIX_CNI == "patu"
+
+- hosts: singleNodeCluster
+  roles:
+    - role: install-cni
+      environment:
+        KUBECONFIG: /home/{{ ansible_user }}/.kube/config
+      when: MATRIX_CNI == "flannel"
+
+- hosts: singleNodeCluster
+  roles:
+    - role: run-iperf
+      environment:
+        KUBECONFIG: /home/{{ ansible_user }}/.kube/config
+      vars:
+        MATRIX: patu-kpng-kubeadm
+      when: MATRIX_CNI == "patu"
+
+- hosts: singleNodeCluster
+  roles:
+    - role: run-iperf
+      environment:
+        KUBECONFIG: /home/{{ ansible_user }}/.kube/config
+      vars:
+        MATRIX: flannel-kubeproxy-kubeadm
+      when: MATRIX_CNI == "flannel"
+
+- hosts: singleNodeCluster
+  roles:
+    - role: reset-kubeadm
+
+#- hosts: localhost
+#  vars_files:
+#    - vars.yml
+#  roles:
+#    - role: terminate-ec2
